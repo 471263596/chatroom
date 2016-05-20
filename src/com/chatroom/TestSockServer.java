@@ -9,69 +9,84 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestSockServer {
-	int i;
-	static List<Client> clientlist=new ArrayList<Client>();
-	public static void main(String[] args) {
+	static List<Client> clientList = new ArrayList<Client>();
+
+	public void init() {
+		ServerSocket server = null;
 		Socket socket = null;
 		try {
-			@SuppressWarnings("resource")
-			ServerSocket ss = new ServerSocket(5555);
-			System.out.println("服务器启动");
+			// 打开端口，等待服务器连接。
+			server = new ServerSocket(8888);
+			System.out.println("服务器已开启！");
+			// 服务端循环监听，若是有客户端连接，服务端接受并且创建一个线程，将连接通道socket放入该线程中，并启动线程。
 			while (true) {
-				socket = ss.accept();
-				TestSockServer tss = new TestSockServer();
-				Client client = tss.new Client(socket);
-				clientlist.add(client);
-				client.start();
-				// new TestSockServer().new Client(socket).start();
-			    
+				socket = server.accept();
+				Client c = new TestSockServer().new Client(socket);
+				clientList.add(c);// 将新连接的客户端存入list中，以便于后面遍历发送信息。
+				c.start();
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-			System.out.println("server over");
+			System.out.println("server over!");
+			//e.printStackTrace();
+		} finally {
+			try {
+				server.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-
 	}
 
+	public static void main(String[] args) {
+		TestSockServer ts = new TestSockServer();
+		ts.init();
+	}
+
+	// 因为需要启用多个线程来完成客户端的连接，所以这里使用内部类。
 	class Client extends Thread {
 		Socket socket = null;
 		DataOutputStream dos = null;
 		DataInputStream dis = null;
 
+		// 使用带参数的构造方法来将通道放入线程中。
 		public Client(Socket socket) {
 			this.socket = socket;
 		}
 
+		@Override
 		public void run() {
+			String str = null;
 			try {
+				dos = new DataOutputStream(socket.getOutputStream());
+				dis = new DataInputStream(socket.getInputStream());
+				// 循环遍历用来接收某个客户端传来的信息，并且将这些信息遍历发送给各个客户端。
 				while (true) {
-					dos = new DataOutputStream(socket.getOutputStream());
-					dis = new DataInputStream(socket.getInputStream());
-					String str = null;
 					if ((str = dis.readUTF()) != null) {
-						System.out.println("客户端说：" + str);
-					}
-					//dos.writeUTF(socket.getPort()+"服务器：Hm..." + str);
-					for (int i = 0; i < clientlist.size(); i++) {
-				    	new DataOutputStream(clientlist.get(i).socket.getOutputStream()).writeUTF(socket.getPort()+"客户端说了: "+str);;
+						// dos.writeUTF(socket.getPort() + "say:" + str);
+						// 循环遍历将信息发送给所有客户端。
+						for (int i = 0; i < clientList.size(); i++) {
+							new DataOutputStream(clientList.get(i).socket.getOutputStream())
+									.writeUTF(socket.getPort() + ":" + str);
+						}
 					}
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println("客户端" + socket.getPort() + "退出");
+				clientList.remove(this);
 				// e.printStackTrace();
-				System.out.println("server over");
 			} finally {
+				// 关闭各种流
 				try {
-					socket.close();
-					dos.close();
 					dis.close();
+					dos.close();
+					socket.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+
 			}
+
 		}
 	}
 }
