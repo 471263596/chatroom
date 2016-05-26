@@ -35,12 +35,13 @@ public class MainFrame extends JFrame {
 	private JTextField sendText;
 	private JButton sendButton;
 	private JTextField nameText;
-	private JList userList; 
 	private JTextArea textArea;
 	
 	private DataInputStream dis;
 	private DataOutputStream dos;
 	private Socket socket;
+	private JScrollPane scrollPane;
+	private JList userList;
 
 	/**
 	 * Launch the application.
@@ -81,8 +82,6 @@ public class MainFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		textArea = new JTextArea();
-		
 		sendText = new JTextField();
 		sendText.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -99,8 +98,6 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
-		userList = new JList();
-		
 		JLabel label = new JLabel("\u6635\u79F0\uFF1A");
 		
 		nameText = new JTextField();
@@ -116,6 +113,10 @@ public class MainFrame extends JFrame {
 				sendMsg(nameText);
 			}
 		});
+		
+		scrollPane = new JScrollPane();
+		
+		userList = new JList();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -123,24 +124,28 @@ public class MainFrame extends JFrame {
 					.addGap(27)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(sendText, GroupLayout.PREFERRED_SIZE, 201, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(sendButton)
-							.addContainerGap(192, Short.MAX_VALUE))
-						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-								.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 284, GroupLayout.PREFERRED_SIZE)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(label)
-									.addGap(34)
-									.addComponent(nameText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(nameButton)))
-							.addPreferredGap(ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(label_1)
-								.addComponent(userList, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
-							.addGap(27))))
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 276, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+							.addGroup(gl_contentPane.createSequentialGroup()
+								.addComponent(sendText, GroupLayout.PREFERRED_SIZE, 201, GroupLayout.PREFERRED_SIZE)
+								.addGap(18)
+								.addComponent(sendButton)
+								.addPreferredGap(ComponentPlacement.RELATED))
+							.addGroup(gl_contentPane.createSequentialGroup()
+								.addComponent(label)
+								.addGap(34)
+								.addComponent(nameText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+								.addComponent(nameButton)
+								.addPreferredGap(ComponentPlacement.RELATED, 72, Short.MAX_VALUE))))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(label_1)
+							.addGap(94))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(userList, GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+							.addContainerGap())))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -152,16 +157,21 @@ public class MainFrame extends JFrame {
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(label_1)
 							.addComponent(nameButton)))
-					.addGap(18)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-						.addComponent(userList, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(textArea, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE))
+					.addGap(26)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 230, GroupLayout.PREFERRED_SIZE)
+						.addComponent(userList, GroupLayout.PREFERRED_SIZE, 230, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(sendText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(sendButton))
-					.addContainerGap(40, Short.MAX_VALUE))
+					.addContainerGap(20, Short.MAX_VALUE))
 		);
+		
+		textArea = new JTextArea();
+//		textArea.setCaretPosition(textArea.getText().length());
+		scrollPane.setViewportView(textArea);
+//		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 		contentPane.setLayout(gl_contentPane);
 		init();
 	}
